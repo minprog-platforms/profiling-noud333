@@ -42,27 +42,17 @@ class Sudoku:
 
     def options_at(self, x: int, y: int) -> Iterable[int]:
         """Returns all possible values (options) at x,y."""
-        options = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        options = set([1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-        # Remove all values from the row
-        for value in self.row_values(y):
-            if value in options:
-                options.remove(value)
+        # Remove all values from row and column
+        options = options - set(self.row_values(y))
+        options = options - set(self.column_values(x))
 
-        # Remove all values from the column
-        for value in self.column_values(x):
-            if value in options:
-                options.remove(value)
-
-        # Get the index of the block based from x,y
+        # Remove all values from block
         block_index = (y // 3) * 3 + x // 3
+        options = options - set(self.block_values(block_index))
 
-        # Remove all values from the block
-        for value in self.block_values(block_index):
-            if value in options:
-                options.remove(value)
-
-        return options
+        return list(options)
 
     def next_empty_index(self) -> tuple[int, int]:
         """
